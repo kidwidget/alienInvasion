@@ -88,13 +88,10 @@ class AlienInvasion:
 			self.bullets.add(new_bullet)
 	
 	def _update_bullets(self):
-		"""Update position of bullets an dget rid of old bullets."""
+		"""Update position of bullets and get rid of old bullets."""
 		# Update bullet positions
 		self.bullets.update()
-		if not self.aliens:
-			# Destroy existing bullets and create new fleet
-			self.bullets.empty()
-			self._create_fleet()
+		
 
 		# Get rid of bullets that have disappeared
 		for bullet in self.bullets.copy():
@@ -109,6 +106,11 @@ class AlienInvasion:
 		# Remove any bullets and aliens that have colided.
 		collision = pygame.sprite.groupcollide(
 			self.bullets, self.aliens, True, True)
+		if not self.aliens:
+			# Destroy existing bullets and create new fleet
+			self.bullets.empty()
+			self._create_fleet()
+			self.settings.increase_speed()
 
 	def _update_screen(self):
 		# Redraw the screen during each passing of the loop
@@ -207,6 +209,8 @@ class AlienInvasion:
 		"""Start a new game when the player clicks Play."""
 		button_clicked = self.play_button.rect.collidepoint(mouse_pos)
 		if button_clicked and not self.game_active:
+			# Reset the game settings.
+			self.settings.initialize_dynamic_settings()
 			# Reset the game statistics
 			self.stats.reset_stats()
 			self.game_active = True
